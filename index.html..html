@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulacro ICFES Saber 11</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+    h1, h2 { color: #333; }
+    .question { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .question p { margin-bottom: 10px; font-weight: bold; }
+    label { display: block; margin-bottom: 5px; }
+    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .result { margin-top: 20px; font-size: 18px; background: #fff; padding: 15px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>Simulacro ICFES Saber 11</h1>
+  <form id="icfes-form">
+    <div id="test-container"></div>
+    <button type="button" onclick="calcularResultado()">Calcular Resultado</button>
+  </form>
+  <div id="resultado" class="result"></div>
+
+  <script>
+    const materias = {
+      "Sociales y Ciudadanas": [],
+      "Ciencias Naturales": [],
+      "Inglés": [],
+      "Matemáticas Analíticas": []
+    };
+
+    const opciones = ["A", "B", "C", "D"];
+
+    // Preguntas estilo ICFES por materia
+    for (let materia in materias) {
+      for (let i = 1; i <= 15; i++) {
+        let texto = "";
+        let respuestas = {};
+        let correcta = "A";
+
+        if (materia === "Sociales y Ciudadanas") {
+          texto = `(${i}) En una democracia participativa como la colombiana, los ciudadanos pueden incidir en las decisiones del Estado a través de:`;
+          respuestas = {
+            A: "Mecanismos de participación como el plebiscito y el referendo.",
+            B: "La obediencia exclusiva al presidente.",
+            C: "El control militar de los recursos públicos.",
+            D: "La intervención de potencias extranjeras."
+          };
+          correcta = "A";
+        }
+
+        if (materia === "Ciencias Naturales") {
+          texto = `(${i}) En el proceso de fotosíntesis, las plantas absorben luz solar para:`;
+          respuestas = {
+            A: "Transformarla en energía química almacenada en glucosa.",
+            B: "Reducir la transpiración de las hojas.",
+            C: "Liberar dióxido de carbono al ambiente.",
+            D: "Formar proteínas a partir de minerales del suelo."
+          };
+          correcta = "A";
+        }
+
+        if (materia === "Inglés") {
+          texto = `(${i}) Complete the sentence: "If she had studied, she ____ the exam."`;
+          respuestas = {
+            A: "will pass",
+            B: "would have passed",
+            C: "passes",
+            D: "passed"
+          };
+          correcta = "B";
+        }
+
+        if (materia === "Matemáticas Analíticas") {
+          texto = `(${i}) Si la función f(x) = 3x + 2, ¿cuál es el valor de f(4)?`;
+          respuestas = {
+            A: "14",
+            B: "12",
+            C: "10",
+            D: "18"
+          };
+          correcta = "A";
+        }
+
+        materias[materia].push({
+          texto: texto,
+          opciones: respuestas,
+          correcta: correcta
+        });
+      }
+    }
+
+    // Mostrar preguntas
+    const container = document.getElementById("test-container");
+    let index = 0;
+    for (let materia in materias) {
+      const h2 = document.createElement("h2");
+      h2.textContent = materia;
+      container.appendChild(h2);
+
+      materias[materia].forEach(p => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.innerHTML = `<p>${p.texto}</p>` +
+          opciones.map(op => `
+            <label><input type="radio" name="q${index}" value="${op}"> ${op}. ${p.opciones[op]}</label>
+          `).join('');
+        container.appendChild(div);
+        index++;
+      });
+    }
+
+    function calcularResultado() {
+      let total = 0, correctas = 0, idx = 0;
+      for (let materia in materias) {
+        materias[materia].forEach(p => {
+          const opciones = document.getElementsByName(`q${idx}`);
+          for (const o of opciones) {
+            if (o.checked) {
+              if (o.value === p.correcta) correctas++;
+              break;
+            }
+          }
+          idx++;
+          total++;
+        });
+      }
+      const porcentaje = ((correctas / total) * 100).toFixed(2);
+      document.getElementById("resultado").innerHTML = `
+        <strong>Respuestas correctas:</strong> ${correctas}/${total}<br>
+        <strong>Puntaje simulado:</strong> ${porcentaje}%
+      `;
+    }
+  </script>
+
+</body>
+</html>
